@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { Component, useMemo, useState } from 'react';
 
 class ErrorBoundary extends Component {
@@ -14,23 +13,64 @@ class ErrorBoundary extends Component {
   }
   render() {
     if (this.state.hasError) {
-      return this.props.fallback || <div className="p-10 text-center font-bold text-[var(--text-primary)]">Something went wrong rendering this component.</div>;
+      return (
+        this.props.fallback || (
+          <div className="p-10 text-center font-bold text-[var(--text-primary)]">
+            Something went wrong rendering this component.
+          </div>
+        )
+      );
     }
     return this.props.children;
   }
 }
 import { Bar, Doughnut, Line } from 'react-chartjs-2';
 import {
-  ArcElement, BarElement, CategoryScale, Chart as ChartJS,
-  Filler, Legend, LinearScale, LineElement, PointElement, Title, Tooltip
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Filler,
+  Legend,
+  LinearScale,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip,
 } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { ArrowDownRight, ArrowUpRight, CheckCircle2, ChevronDown, ChevronUp, LineChart as LineChartIcon, Package, PieChart, AlertTriangle, TrendingDown, TrendingUp, Lightbulb, HelpCircle, X } from 'lucide-react';
+import {
+  AlertTriangle,
+  ArrowDownRight,
+  ArrowUpRight,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  LineChart as LineChartIcon,
+  Package,
+  PieChart,
+  TrendingDown,
+  TrendingUp,
+  X,
+} from 'lucide-react';
+
+import { useData } from '../context/DataContext';
 import { useTranslation } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
-import { useData } from '../context/DataContext';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, ArcElement, Filler, ChartDataLabels);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  Filler,
+  ChartDataLabels
+);
 
 export function Analytics() {
   const { theme } = useTheme();
@@ -40,7 +80,6 @@ export function Analytics() {
   const [timeRange, setTimeRange] = useState('daily');
   const [donutToggle, setDonutToggle] = useState('revenue');
   const [sortConfig, setSortConfig] = useState({ key: 'revenue', direction: 'desc' });
-  const [expandedWhy, setExpandedWhy] = useState(null);
 
   const isDark = theme === 'dark';
   const textColor = isDark ? '#FFFFFF' : '#111111';
@@ -85,8 +124,8 @@ export function Analytics() {
         lbl = d.toLocaleDateString(undefined, { month: 'short', year: '2-digit' });
       }
       if (dmapRev[lbl] !== undefined) {
-        dmapRev[lbl] += (x.total || x.amt || 0);
-        dmapProf[lbl] += (x.profit || 0);
+        dmapRev[lbl] += x.total || x.amt || 0;
+        dmapProf[lbl] += x.profit || 0;
       }
     });
 
@@ -126,13 +165,38 @@ export function Analytics() {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: 'top', labels: { color: textColor, font: { family: 'Space Grotesk', size: 14, weight: '700' }, usePointStyle: true, boxWidth: 10 } },
-      tooltip: { backgroundColor: '#000000', titleColor: '#FFFFFF', bodyColor: '#FFFFFF', borderColor: '#FFFFFF', borderWidth: 2, padding: 12, cornerRadius: 0, displayColors: false },
-      datalabels: { display: false }
+      legend: {
+        position: 'top',
+        labels: {
+          color: textColor,
+          font: { family: 'Space Grotesk', size: 14, weight: '700' },
+          usePointStyle: true,
+          boxWidth: 10,
+        },
+      },
+      tooltip: {
+        backgroundColor: '#000000',
+        titleColor: '#FFFFFF',
+        bodyColor: '#FFFFFF',
+        borderColor: '#FFFFFF',
+        borderWidth: 2,
+        padding: 12,
+        cornerRadius: 0,
+        displayColors: false,
+      },
+      datalabels: { display: false },
     },
     scales: {
-      x: { ticks: { color: axisTextColor, font: { family: 'Space Grotesk', size: 12, weight: '700' } }, grid: { display: false }, border: { color: textColor, width: 2 } },
-      y: { ticks: { color: axisTextColor, font: { family: 'Space Grotesk', size: 12, weight: '700' } }, grid: { color: gridColor }, border: { color: textColor, width: 2 } },
+      x: {
+        ticks: { color: axisTextColor, font: { family: 'Space Grotesk', size: 12, weight: '700' } },
+        grid: { display: false },
+        border: { color: textColor, width: 2 },
+      },
+      y: {
+        ticks: { color: axisTextColor, font: { family: 'Space Grotesk', size: 12, weight: '700' } },
+        grid: { color: gridColor },
+        border: { color: textColor, width: 2 },
+      },
     },
   };
 
@@ -146,13 +210,16 @@ export function Analytics() {
       dmap[lbl] = { rev: 0, cost: 0, profit: 0 };
     }
     salesData.forEach((x) => {
-      const lbl = new Date(x.date).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
+      const lbl = new Date(x.date).toLocaleDateString(undefined, {
+        day: 'numeric',
+        month: 'short',
+      });
       if (dmap[lbl]) {
         const rev = x.total || x.amt || 0;
         const prof = x.profit || 0;
         dmap[lbl].rev += rev;
         dmap[lbl].profit += prof;
-        dmap[lbl].cost += (rev - prof);
+        dmap[lbl].cost += rev - prof;
       }
     });
 
@@ -162,19 +229,19 @@ export function Analytics() {
       datasets: [
         {
           label: 'Profit',
-          data: labels.map(l => dmap[l].profit),
+          data: labels.map((l) => dmap[l].profit),
           backgroundColor: '#00C853',
           borderColor: isDark ? '#ffffff' : '#000000',
           borderWidth: 2,
         },
         {
           label: 'Cost',
-          data: labels.map(l => dmap[l].cost),
+          data: labels.map((l) => dmap[l].cost),
           backgroundColor: '#FF4081',
           borderColor: isDark ? '#ffffff' : '#000000',
           borderWidth: 2,
-        }
-      ]
+        },
+      ],
     };
   }, [salesData, isDark]);
 
@@ -182,13 +249,39 @@ export function Analytics() {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: 'top', labels: { color: textColor, font: { family: 'Space Grotesk', size: 14, weight: '700' }, usePointStyle: true, boxWidth: 10 } },
-      tooltip: { backgroundColor: '#000000', titleColor: '#FFFFFF', bodyColor: '#FFFFFF', borderColor: '#FFFFFF', borderWidth: 2, padding: 12, cornerRadius: 0 },
-      datalabels: { display: false }
+      legend: {
+        position: 'top',
+        labels: {
+          color: textColor,
+          font: { family: 'Space Grotesk', size: 14, weight: '700' },
+          usePointStyle: true,
+          boxWidth: 10,
+        },
+      },
+      tooltip: {
+        backgroundColor: '#000000',
+        titleColor: '#FFFFFF',
+        bodyColor: '#FFFFFF',
+        borderColor: '#FFFFFF',
+        borderWidth: 2,
+        padding: 12,
+        cornerRadius: 0,
+      },
+      datalabels: { display: false },
     },
     scales: {
-      x: { stacked: true, ticks: { color: axisTextColor, font: { family: 'Space Grotesk', size: 12, weight: '700' } }, grid: { display: false }, border: { color: textColor, width: 2 } },
-      y: { stacked: true, ticks: { color: axisTextColor, font: { family: 'Space Grotesk', size: 12, weight: '700' } }, grid: { color: gridColor }, border: { color: textColor, width: 2 } },
+      x: {
+        stacked: true,
+        ticks: { color: axisTextColor, font: { family: 'Space Grotesk', size: 12, weight: '700' } },
+        grid: { display: false },
+        border: { color: textColor, width: 2 },
+      },
+      y: {
+        stacked: true,
+        ticks: { color: axisTextColor, font: { family: 'Space Grotesk', size: 12, weight: '700' } },
+        grid: { color: gridColor },
+        border: { color: textColor, width: 2 },
+      },
     },
   };
 
@@ -197,10 +290,13 @@ export function Analytics() {
     const cmap = {};
     salesData.forEach((txn) => {
       const items = txn.items || [txn];
-      items.forEach(item => {
+      items.forEach((item) => {
         const prod = productsData.find((x) => String(x.id) === String(item.pid || item.id));
         const cat = prod ? prod.category : 'General';
-        const val = donutToggle === 'revenue' ? ((item.qty || 0) * (item.rate || item.sell || 0) || txn.amt) : (item.qty || 1);
+        const val =
+          donutToggle === 'revenue'
+            ? (item.qty || 0) * (item.rate || item.sell || 0) || txn.amt
+            : item.qty || 1;
         cmap[cat] = (cmap[cat] || 0) + val;
       });
     });
@@ -209,7 +305,14 @@ export function Analytics() {
       datasets: [
         {
           data: Object.values(cmap),
-          backgroundColor: ['#FFD600', '#FF4081', '#00E5FF', '#00C853', isDark ? '#333333' : '#111111', '#FF9100'],
+          backgroundColor: [
+            '#FFD600',
+            '#FF4081',
+            '#00E5FF',
+            '#00C853',
+            isDark ? '#333333' : '#111111',
+            '#FF9100',
+          ],
           borderColor: isDark ? '#ffffff' : '#000000',
           borderWidth: 2,
           hoverOffset: 15,
@@ -222,22 +325,41 @@ export function Analytics() {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: 'bottom', labels: { color: textColor, font: { family: 'Space Grotesk', size: 12, weight: '700' }, padding: 24, usePointStyle: true, boxWidth: 10 } },
-      tooltip: { backgroundColor: '#000000', titleColor: '#FFFFFF', bodyColor: '#FFFFFF', borderColor: '#FFFFFF', borderWidth: 2, padding: 12, cornerRadius: 0 },
+      legend: {
+        position: 'bottom',
+        labels: {
+          color: textColor,
+          font: { family: 'Space Grotesk', size: 12, weight: '700' },
+          padding: 24,
+          usePointStyle: true,
+          boxWidth: 10,
+        },
+      },
+      tooltip: {
+        backgroundColor: '#000000',
+        titleColor: '#FFFFFF',
+        bodyColor: '#FFFFFF',
+        borderColor: '#FFFFFF',
+        borderWidth: 2,
+        padding: 12,
+        cornerRadius: 0,
+      },
       datalabels: {
         color: '#ffffff',
         font: { family: 'Space Grotesk', weight: '900', size: 14 },
         formatter: (value, ctx) => {
           let sum = 0;
           let dataArr = ctx.chart.data.datasets[0].data;
-          dataArr.map(data => { sum += data; });
+          dataArr.map((data) => {
+            sum += data;
+          });
           if (sum === 0) return '';
-          let percentage = (value * 100 / sum).toFixed(0) + "%";
+          let percentage = ((value * 100) / sum).toFixed(0) + '%';
           return percentage;
         },
         textStrokeColor: '#000000',
         textStrokeWidth: 4,
-      }
+      },
     },
   };
 
@@ -248,23 +370,31 @@ export function Analytics() {
     const pmap = {};
     salesData.forEach((txn) => {
       const items = txn.items || [txn];
-      items.forEach(item => {
+      items.forEach((item) => {
         const id = String(item.pid || item.id);
-        if (!pmap[id]) pmap[id] = { id, product: item.name || "Unknown", units: 0, revenue: 0, profit: 0, margin: 0 };
-        const rev = (item.qty || 0) * (item.rate || item.sell || 0) || (txn.amt || 0);
+        if (!pmap[id])
+          pmap[id] = {
+            id,
+            product: item.name || 'Unknown',
+            units: 0,
+            revenue: 0,
+            profit: 0,
+            margin: 0,
+          };
+        const rev = (item.qty || 0) * (item.rate || item.sell || 0) || txn.amt || 0;
         // Estimate profit if cost is known
         const cost = item.cost || 0;
-        const prof = (rev - (item.qty * cost)) || (txn.profit || 0);
-        
-        pmap[id].units += (item.qty || 0);
+        const prof = rev - item.qty * cost || txn.profit || 0;
+
+        pmap[id].units += item.qty || 0;
         pmap[id].revenue += rev;
         pmap[id].profit += prof;
       });
     });
-    
-    let arr = Object.values(pmap).map(p => ({
+
+    let arr = Object.values(pmap).map((p) => ({
       ...p,
-      margin: p.revenue > 0 ? Number(((p.profit / p.revenue) * 100).toFixed(1)) : 0
+      margin: p.revenue > 0 ? Number(((p.profit / p.revenue) * 100).toFixed(1)) : 0,
     }));
 
     arr.sort((a, b) => {
@@ -281,7 +411,7 @@ export function Analytics() {
       return 0;
     });
 
-    console.log("GRID DATA:", arr);
+    console.log('GRID DATA:', arr);
     return arr;
   }, [salesData, sortConfig]);
 
@@ -291,140 +421,20 @@ export function Analytics() {
     setSortConfig({ key, direction });
   };
 
-  // --- SMART RECOMMENDATION ENGINE ---
-  const recommendations = useMemo(() => {
-    const recs = [];
-    if (!productsData.length) return recs;
-
-    // Fast Moving / Restock
-    if (productGridData.length > 0) {
-      const topSelling = productGridData[0];
-      const prodInDB = productsData.find(p => String(p.id) === String(topSelling.id));
-      if (prodInDB && prodInDB.qty <= 20) {
-        recs.push({
-          type: 'restock',
-          title: `${t('analytics.restock')}: ${prodInDB.name}`,
-          desc: t('analytics.reasonRestock', '').replace('{qty}', prodInDB.qty),
-          reason: `Formula: Stock (${prodInDB.qty}) ≤ 20 units AND top revenue product → restock flag triggered. Revenue from this item: ₹${(topSelling.revenue || 0).toLocaleString()}.`,
-          icon: <TrendingUp className="w-6 h-6 text-[#111111]" />, bg: '#FFD600'
-        });
-      }
-    }
-
-    // Promote / Slow Moving Item
-    const slowMoving = productGridData.filter(p => {
-      const prod = productsData.find(pd => String(pd.id) === String(p.id));
-      return prod && prod.qty > 30 && p.units < 5; // Over 30 in stock but less than 5 sold
-    });
-
-    if (slowMoving.length > 0) {
-      const item = slowMoving[0];
-      recs.push({
-        type: 'dead',
-        title: `${t('analytics.promote')}: ${item.product}`,
-        desc: `High inventory tied up with low demand.`,
-        reason: `Formula: ${item.units} units sold in 30 days vs ${productsData.find(p=>String(p.id)===String(item.id))?.qty} units in stock. Sales velocity is below healthy threshold for this stock level.`,
-        icon: <TrendingDown className="w-6 h-6 text-[#111111]" />, bg: '#00E5FF'
-      });
-    }
-
-    // Dead Stock (Zero sales)
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const deadStock = productsData.filter(p => p.qty > 0 && !salesData.some(s => {
-      const items = s.items || [s];
-      return items.some(item => String(item.pid || item.id) === String(p.id)) && new Date(s.date) >= thirtyDaysAgo;
-    }));
-    
-    if (deadStock.length > 0 && !recs.some(r => r.title.includes(deadStock[0].name))) {
-      recs.push({
-        type: 'dead',
-        title: `Dead Stock Review: ${deadStock[0].name}`,
-        desc: `No sales recorded in the last 30 days.`,
-        reason: `Formula: Item has ${deadStock[0].qty} units in stock but has 0 sales in the last 30-day window. Recommend liquidation or return to supplier.`,
-        icon: <TrendingDown className="w-6 h-6 text-[#111111]" />, bg: '#FF9100'
-      });
-    }
-
-    // Low Profit Margin Warning
-    const lowMarginItem = productGridData.find(p => Number(p.margin) < 15 && (p.revenue || 0) > 0);
-    if (lowMarginItem) {
-      recs.push({
-        type: 'warning',
-        title: `${t('analytics.reviewPricing')}: ${lowMarginItem.product}`,
-        desc: t('analytics.reasonReviewPricing', '').replace('{margin}', lowMarginItem.margin),
-        reason: `Formula: Margin = (Profit / Revenue) × 100 = (₹${(lowMarginItem.profit||0).toLocaleString()} / ₹${(lowMarginItem.revenue||0).toLocaleString()}) × 100 = ${lowMarginItem.margin}% — below 15% healthy threshold.`,
-        icon: <AlertTriangle className="w-6 h-6 text-[#ffffff]" />, bg: '#FF4081'
-      });
-    }
-
-    if (recs.length === 0) {
-      recs.push({
-        type: 'good',
-        title: t('analytics.allGood'),
-        desc: t('analytics.allGoodDesc'),
-        reason: 'No low stock, dead stock, or low margin items detected based on your current thresholds.',
-        icon: <CheckCircle2 className="w-6 h-6 text-[#111111]" />, bg: '#00C853'
-      });
-    }
-
-    return recs;
-  }, [productsData, salesData, productGridData, t]);
-
   const renderEmptyState = (msg) => (
     <div className="h-full flex flex-col items-center justify-center gap-6 text-[var(--text-secondary)] opacity-30 py-20 text-center">
       <LineChartIcon className="w-16 h-16" />
-      <p className="text-xl font-black uppercase tracking-widest">{msg || t('analytics.noAnalyticsData')}</p>
+      <p className="text-xl font-black uppercase tracking-widest">
+        {msg || t('analytics.noAnalyticsData')}
+      </p>
       <p className="text-sm font-bold">{t('analytics.noDataCta')}</p>
     </div>
   );
 
   return (
     <div className="space-y-12">
-      
-      {/* HEADER OVERVIEW */}
-      <div className="brutalist-card bg-[var(--color-brand)] border-[var(--border-color)] flex flex-col md:flex-row justify-between items-start md:items-center gap-8 p-12 hover:shadow-[10px_10px_0_var(--shadow-color)] transition-shadow">
-        <div className="max-w-xl">
-          <h2 className="text-5xl font-black tracking-tighter mb-4 uppercase italic leading-none text-[#111111]">{t('insights.title')}</h2>
-          <p className="text-lg font-bold text-[#111111]/80 leading-tight">{t('insights.subtitle')}</p>
-        </div>
-        <div className="p-6 bg-[var(--card-bg)] border-4 border-[var(--border-color)] shadow-[6px_6px_0_var(--shadow-color)]">
-          <Lightbulb className="w-12 h-12 text-[var(--text-primary)]" />
-        </div>
-      </div>
-
-      {/* SMART RECOMMENDATIONS with Why? explainability */}
-      {recommendations.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {recommendations.map((rec, i) => (
-            <div key={i} className="border-4 border-[var(--border-color)] bg-[var(--card-bg)] p-6 shadow-[6px_6px_0_var(--shadow-color)] hover:-translate-y-1 hover:shadow-[8px_8px_0_var(--shadow-color)] transition-all">
-              <div className="flex items-center gap-4 mb-3">
-                <div className="w-12 h-12 flex items-center justify-center border-2 border-[var(--border-color)] shadow-[3px_3px_0_var(--shadow-color)]" style={{ backgroundColor: rec.bg }}>
-                  {rec.icon}
-                </div>
-                <h3 className="text-base font-black uppercase tracking-tighter leading-tight text-[var(--text-primary)] flex-1">{rec.title}</h3>
-              </div>
-              <p className="text-sm font-bold text-[var(--text-secondary)] mb-4">{rec.desc}</p>
-              <button
-                onClick={() => setExpandedWhy(expandedWhy === i ? null : i)}
-                className="text-xs font-black uppercase tracking-wider border-2 border-[var(--border-color)] px-3 py-1.5 bg-[var(--bg-secondary)] hover:bg-[var(--border-color)] hover:text-[var(--bg-primary)] transition-colors flex items-center gap-2"
-              >
-                <HelpCircle className="w-3 h-3" /> {t('analytics.whyButton')}
-              </button>
-              {expandedWhy === i && (
-                <div className="mt-4 p-4 border-2 border-[var(--border-color)] bg-[var(--bg-secondary)] text-xs font-bold text-[var(--text-primary)] leading-relaxed">
-                  <span className="font-black uppercase tracking-widest block mb-1 text-[var(--color-secondary)]">Calculation:</span>
-                  {rec.reason}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-
       {/* CHARTS GRID 1: TRENDS */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        
         {/* Sales Trend Analysis */}
         <div className="lg:col-span-2 brutalist-card hover:shadow-[8px_8px_0_var(--shadow-color)] transition-shadow">
           <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-6 mb-10 pb-4 border-b-2 border-[var(--border-color)]">
@@ -432,22 +442,31 @@ export function Analytics() {
               <div className="w-10 h-10 border-2 border-[var(--border-color)] bg-[var(--color-accent)] flex items-center justify-center shadow-[2px_2px_0_var(--shadow-color)]">
                 <LineChartIcon className="w-5 h-5 text-[#111111]" />
               </div>
-              <p className="text-base font-black text-[var(--text-primary)] uppercase tracking-widest">{t('analytics.salesTrendTitle')}</p>
+              <p className="text-base font-black text-[var(--text-primary)] uppercase tracking-widest">
+                {t('analytics.salesTrendTitle')}
+              </p>
             </div>
             <div className="flex border-2 border-[var(--border-color)] shadow-[3px_3px_0_var(--shadow-color)]">
               {['daily', 'weekly', 'monthly'].map((range) => (
-                <button key={range} onClick={() => setTimeRange(range)}
-                  className={`px-4 py-1.5 text-xs font-black uppercase transition-colors ${timeRange === range ? 'bg-[var(--text-primary)] text-[var(--bg-primary)]' : 'bg-[var(--card-bg)] text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'}`}>
+                <button
+                  key={range}
+                  onClick={() => setTimeRange(range)}
+                  className={`px-4 py-1.5 text-xs font-black uppercase transition-colors ${timeRange === range ? 'bg-[var(--text-primary)] text-[var(--bg-primary)]' : 'bg-[var(--card-bg)] text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'}`}
+                >
                   {t(`analytics.${range}`)}
                 </button>
               ))}
             </div>
           </div>
           <div className="h-[400px] flex-1">
-            {salesData.length > 0 ? <Line key={lang} data={lineData} options={lineOptions} /> : renderEmptyState()}
+            {salesData.length > 0 ? (
+              <Line key={lang} data={lineData} options={lineOptions} />
+            ) : (
+              renderEmptyState()
+            )}
           </div>
         </div>
-        
+
         {/* Category Performance */}
         <div className="brutalist-card hover:shadow-[8px_8px_0_var(--shadow-color)] transition-shadow">
           <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-6 mb-10 pb-4 border-b-2 border-[var(--border-color)]">
@@ -455,37 +474,50 @@ export function Analytics() {
               <div className="w-10 h-10 border-2 border-[var(--border-color)] bg-[var(--color-secondary)] flex items-center justify-center shadow-[2px_2px_0_var(--shadow-color)] text-[#ffffff]">
                 <PieChart className="w-5 h-5" />
               </div>
-              <p className="text-base font-black text-[var(--text-primary)] uppercase tracking-widest">{t('analytics.categoryShare')}</p>
+              <p className="text-base font-black text-[var(--text-primary)] uppercase tracking-widest">
+                {t('analytics.categoryShare')}
+              </p>
             </div>
             <div className="flex border-2 border-[var(--border-color)] shadow-[3px_3px_0_var(--shadow-color)]">
-               {['revenue', 'qty'].map((toggle) => (
-                <button key={toggle} onClick={() => setDonutToggle(toggle)}
-                  className={`px-3 py-1 text-[10px] font-black uppercase transition-colors ${donutToggle === toggle ? 'bg-[var(--text-primary)] text-[var(--bg-primary)]' : 'bg-[var(--card-bg)] text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'}`}>
+              {['revenue', 'qty'].map((toggle) => (
+                <button
+                  key={toggle}
+                  onClick={() => setDonutToggle(toggle)}
+                  className={`px-3 py-1 text-[10px] font-black uppercase transition-colors ${donutToggle === toggle ? 'bg-[var(--text-primary)] text-[var(--bg-primary)]' : 'bg-[var(--card-bg)] text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'}`}
+                >
                   {t(`analytics.${toggle}`)}
                 </button>
               ))}
             </div>
           </div>
           <div className="h-[400px] flex-1">
-            {donutData.labels.length > 0 ? <Doughnut key={lang} data={donutData} options={donutOptions} /> : renderEmptyState(t('analytics.noData'))}
+            {donutData.labels.length > 0 ? (
+              <Doughnut key={lang} data={donutData} options={donutOptions} />
+            ) : (
+              renderEmptyState(t('analytics.noData'))
+            )}
           </div>
         </div>
-
       </div>
 
       {/* CHARTS GRID 2: PROFIT COMPOSITION & PERFORMANCE GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-        
         {/* Profit Breakdown Analysis */}
         <div className="brutalist-card hover:shadow-[8px_8px_0_var(--shadow-color)] transition-shadow">
           <div className="flex items-center gap-4 mb-10 pb-4 border-b-2 border-[var(--border-color)]">
             <div className="w-10 h-10 border-2 border-[var(--border-color)] bg-[#00C853] flex items-center justify-center shadow-[2px_2px_0_var(--shadow-color)]">
               <TrendingUp className="w-5 h-5 text-[#111111]" />
             </div>
-            <p className="text-base font-black text-[var(--text-primary)] uppercase tracking-widest">{t('analytics.profitComposition')}</p>
+            <p className="text-base font-black text-[var(--text-primary)] uppercase tracking-widest">
+              {t('analytics.profitComposition')}
+            </p>
           </div>
           <div className="h-[350px]">
-            {salesData.length > 0 ? <Bar key={lang} data={stackedBarData} options={stackedBarOptions} /> : renderEmptyState()}
+            {salesData.length > 0 ? (
+              <Bar key={lang} data={stackedBarData} options={stackedBarOptions} />
+            ) : (
+              renderEmptyState()
+            )}
           </div>
         </div>
 
@@ -495,42 +527,106 @@ export function Analytics() {
             <div className="w-10 h-10 border-2 border-[var(--border-color)] bg-[#FF4081] flex items-center justify-center shadow-[2px_2px_0_var(--shadow-color)]">
               <Package className="w-5 h-5 text-[#ffffff]" />
             </div>
-            <p className="text-base font-black text-[var(--text-primary)] uppercase tracking-widest">{t('analytics.productGrid')}</p>
+            <p className="text-base font-black text-[var(--text-primary)] uppercase tracking-widest">
+              {t('analytics.productGrid')}
+            </p>
           </div>
           <div className="flex-1 overflow-auto brutalist-table-wrap min-h-[300px]">
             <ErrorBoundary fallback={renderEmptyState()}>
               <table className="brutalist-table w-full text-sm">
                 <thead className="sticky top-0 bg-[var(--card-bg)] z-10 shadow-sm border-b-4 border-[var(--border-color)]">
                   <tr>
-                    <th className="cursor-pointer hover:bg-[var(--bg-secondary)]" onClick={() => handleSort('product')}>
-                      <div className="flex items-center gap-2">{t('inventory.product')} {sortConfig.key === 'product' && (sortConfig.direction === 'asc' ? <ChevronUp className="w-4 h-4"/> : <ChevronDown className="w-4 h-4"/>)}</div>
+                    <th
+                      className="cursor-pointer hover:bg-[var(--bg-secondary)]"
+                      onClick={() => handleSort('product')}
+                    >
+                      <div className="flex items-center gap-2">
+                        {t('inventory.product')}{' '}
+                        {sortConfig.key === 'product' &&
+                          (sortConfig.direction === 'asc' ? (
+                            <ChevronUp className="w-4 h-4" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4" />
+                          ))}
+                      </div>
                     </th>
-                    <th className="cursor-pointer hover:bg-[var(--bg-secondary)]" onClick={() => handleSort('units')}>
-                      <div className="flex items-center gap-2">{t('analytics.units')} {sortConfig.key === 'units' && (sortConfig.direction === 'asc' ? <ChevronUp className="w-4 h-4"/> : <ChevronDown className="w-4 h-4"/>)}</div>
+                    <th
+                      className="cursor-pointer hover:bg-[var(--bg-secondary)]"
+                      onClick={() => handleSort('units')}
+                    >
+                      <div className="flex items-center gap-2">
+                        {t('analytics.units')}{' '}
+                        {sortConfig.key === 'units' &&
+                          (sortConfig.direction === 'asc' ? (
+                            <ChevronUp className="w-4 h-4" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4" />
+                          ))}
+                      </div>
                     </th>
-                    <th className="cursor-pointer hover:bg-[var(--bg-secondary)]" onClick={() => handleSort('revenue')}>
-                      <div className="flex items-center gap-2">{t('analytics.revenue')} {sortConfig.key === 'revenue' && (sortConfig.direction === 'asc' ? <ChevronUp className="w-4 h-4"/> : <ChevronDown className="w-4 h-4"/>)}</div>
+                    <th
+                      className="cursor-pointer hover:bg-[var(--bg-secondary)]"
+                      onClick={() => handleSort('revenue')}
+                    >
+                      <div className="flex items-center gap-2">
+                        {t('analytics.revenue')}{' '}
+                        {sortConfig.key === 'revenue' &&
+                          (sortConfig.direction === 'asc' ? (
+                            <ChevronUp className="w-4 h-4" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4" />
+                          ))}
+                      </div>
                     </th>
-                    <th className="cursor-pointer hover:bg-[var(--bg-secondary)]" onClick={() => handleSort('margin')}>
-                      <div className="flex items-center gap-2">{t('analytics.margin')} {sortConfig.key === 'margin' && (sortConfig.direction === 'asc' ? <ChevronUp className="w-4 h-4"/> : <ChevronDown className="w-4 h-4"/>)}</div>
+                    <th
+                      className="cursor-pointer hover:bg-[var(--bg-secondary)]"
+                      onClick={() => handleSort('margin')}
+                    >
+                      <div className="flex items-center gap-2">
+                        {t('analytics.margin')}{' '}
+                        {sortConfig.key === 'margin' &&
+                          (sortConfig.direction === 'asc' ? (
+                            <ChevronUp className="w-4 h-4" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4" />
+                          ))}
+                      </div>
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {(!productGridData || !Array.isArray(productGridData) || !productGridData.length) ? (
-                    <tr><td colSpan="4" className="text-center py-10 opacity-50 font-bold uppercase tracking-widest">{t('analytics.noDataCta')}</td></tr>
-                  ) : (
-                    productGridData.slice(0, 10).map((row, i) => (
-                    <tr key={row?.id || i} className={i === 0 ? 'bg-[var(--color-brand)]/10' : ''}>
-                      <td className="font-bold uppercase truncate max-w-[150px]">{row?.product ?? "N/A"}</td>
-                      <td className="font-black">{row?.units ?? 0}</td>
-                      <td className="font-bold italic">₹{(row?.revenue ?? 0).toLocaleString()}</td>
-                      <td>
-                        <span className={`px-2 py-1 text-xs font-black border-2 border-[var(--border-color)] ${Number(row?.margin ?? 0) < 15 ? 'bg-[#FF4081] text-white' : 'bg-[#00C853] text-[#111111]'}`}>
-                          {row?.margin ?? 0}%
-                        </span>
+                  {!productGridData ||
+                  !Array.isArray(productGridData) ||
+                  !productGridData.length ? (
+                    <tr>
+                      <td
+                        colSpan="4"
+                        className="text-center py-10 opacity-50 font-bold uppercase tracking-widest"
+                      >
+                        {t('analytics.noDataCta')}
                       </td>
                     </tr>
+                  ) : (
+                    productGridData.slice(0, 10).map((row, i) => (
+                      <tr
+                        key={row?.id || i}
+                        className={i === 0 ? 'bg-[var(--color-brand)]/10' : ''}
+                      >
+                        <td className="font-bold uppercase truncate max-w-[150px]">
+                          {row?.product ?? 'N/A'}
+                        </td>
+                        <td className="font-black">{row?.units ?? 0}</td>
+                        <td className="font-bold italic">
+                          ₹{(row?.revenue ?? 0).toLocaleString()}
+                        </td>
+                        <td>
+                          <span
+                            className={`px-2 py-1 text-xs font-black border-2 border-[var(--border-color)] ${Number(row?.margin ?? 0) < 15 ? 'bg-[#FF4081] text-white' : 'bg-[#00C853] text-[#111111]'}`}
+                          >
+                            {row?.margin ?? 0}%
+                          </span>
+                        </td>
+                      </tr>
                     ))
                   )}
                 </tbody>
@@ -538,9 +634,7 @@ export function Analytics() {
             </ErrorBoundary>
           </div>
         </div>
-
       </div>
-
     </div>
   );
 }

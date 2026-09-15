@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
+
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from '../../context/LanguageContext';
+
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
 
@@ -14,7 +16,9 @@ export function AppLayout() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] fixed inset-0 z-[99999]">
         <div className="w-12 h-12 border-4 border-[var(--border-color)] border-t-[var(--color-brand)] rounded-full animate-spin mb-4" />
-        <p className="font-black uppercase tracking-widest text-[var(--text-primary)]">{t('loading')}</p>
+        <p className="font-black uppercase tracking-widest text-[var(--text-primary)]">
+          {t('loading')}
+        </p>
       </div>
     );
   }

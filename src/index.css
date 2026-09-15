@@ -57,19 +57,19 @@
   }
 
   [data-theme="dark"] {
-    --bg-primary:    #0a0a0a;
-    --bg-secondary:  #111111;
-    --card-bg:       #151515;
-    --text-primary:  #f5f5f5;
-    --text-secondary:#a0a0a0;
-    --border-color:  #ffffff;
-    --shadow-color:  rgba(255,255,255,0.08);
+    --bg-primary:    #09090b;
+    --bg-secondary:  #111114;
+    --card-bg:       #18181c;
+    --text-primary:  #e8e8ed;
+    --text-secondary:#9a9aaa;
+    --border-color:  #2c2c35;
+    --shadow-color:  rgba(0,0,0,0.55);
     --focus-ring:    2px solid #FFD600;
 
-    --bg:     #0a0a0a;
-    --text:   #f5f5f5;
-    --card:   #121212;
-    --border: #2a2a2a;
+    --bg:     #09090b;
+    --text:   #e8e8ed;
+    --card:   #18181c;
+    --border: #2c2c35;
   }
 
   body {
@@ -116,8 +116,8 @@
   html[data-theme="dark"] body {
     background-color: var(--bg-secondary);
     background-image:
-      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
     background-size: 40px 40px;
   }
 
@@ -415,13 +415,71 @@
   }
 }
 
-/* Dark mode overrides for legacy inline styles */
+/* ─── DARK MODE OVERRIDES ─── */
 [data-theme="dark"] .brutalist-card {
-  box-shadow: 6px 6px 0 rgba(255,255,255,0.06);
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.45);
 }
 [data-theme="dark"] .brutalist-table-wrap {
-  box-shadow: 6px 6px 0 rgba(255,255,255,0.06);
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.45);
 }
 [data-theme="dark"] .stat-card {
-  box-shadow: 6px 6px 0 rgba(255,255,255,0.06);
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.45);
+}
+
+/* Dark mode table header */
+[data-theme="dark"] .brutalist-table thead tr,
+[data-theme="dark"] .brutalist-table th {
+  background: #1c1c22 !important;
+  color: #d0d0da !important;
+  border-right-color: #2c2c35;
+}
+
+/* Dark mode inputs — ensure visible against card bg */
+[data-theme="dark"] .brutalist-input {
+  background: #111114;
+  border-color: #2c2c35;
+  color: #e8e8ed;
+}
+[data-theme="dark"] .brutalist-input:focus {
+  border-color: var(--color-brand);
+  box-shadow: 3px 3px 0 rgba(255,214,0,0.25);
+}
+[data-theme="dark"] .brutalist-input::placeholder {
+  color: #6a6a78;
+}
+
+/* Dark mode buttons — softer shadow */
+[data-theme="dark"] .brutalist-btn {
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.5);
+}
+[data-theme="dark"] .brutalist-btn:hover {
+  box-shadow: 5px 5px 0 rgba(0,0,0,0.5);
+}
+[data-theme="dark"] .brutalist-btn:active {
+  box-shadow: none;
+}
+
+/* Dark mode ghost button */
+[data-theme="dark"] .brutalist-btn-ghost {
+  border-color: #2c2c35;
+  color: #e8e8ed;
+}
+[data-theme="dark"] .brutalist-btn-ghost:hover {
+  background: #1c1c22;
+}
+
+/* Dark mode badges — ensure readability */
+[data-theme="dark"] .badge {
+  border-color: #2c2c35;
+}
+[data-theme="dark"] .badge-neutral {
+  background: #1c1c22;
+  color: #c0c0cc;
+  border-color: #2c2c35;
+}
+
+/* Dark mode select dropdown */
+[data-theme="dark"] select option {
+  background: #18181c;
+  color: #e8e8ed;
 }

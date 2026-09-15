@@ -33,17 +33,33 @@ export const calcItemProfit = (cost, sell, qty) =>
  * @param {string} method        - Cash | UPI | Card | Udhaar
  * @returns {Object}             - all derived values, all rounded to 2dp
  */
-export const calcInvoice = (cart = [], discountPct = 0, taxPct = 0, paidAmt = '', method = 'Cash') => {
-  const subtotal = round2(cart.reduce((acc, item) => acc + round2((Number(item.qty) || 0) * (Number(item.rate) || 0)), 0));
+export const calcInvoice = (
+  cart = [],
+  discountPct = 0,
+  taxPct = 0,
+  paidAmt = '',
+  method = 'Cash'
+) => {
+  const subtotal = round2(
+    cart.reduce((acc, item) => acc + round2((Number(item.qty) || 0) * (Number(item.rate) || 0)), 0)
+  );
   const discountAmount = round2(subtotal * (Number(discountPct) / 100));
   const afterDiscount = round2(subtotal - discountAmount);
   const taxAmount = round2(afterDiscount * (Number(taxPct) / 100));
   const finalTotal = round2(afterDiscount + taxAmount);
-  const totalProfit = round2(cart.reduce((acc, item) => acc + calcItemProfit(item.cost || 0, item.rate || 0, item.qty || 0), 0) - discountAmount);
+  const totalProfit = round2(
+    cart.reduce(
+      (acc, item) => acc + calcItemProfit(item.cost || 0, item.rate || 0, item.qty || 0),
+      0
+    ) - discountAmount
+  );
 
-  const resolvedPaid = paidAmt === '' || paidAmt === undefined
-    ? (method === 'Udhaar' ? 0 : finalTotal)
-    : round2(Number(paidAmt));
+  const resolvedPaid =
+    paidAmt === '' || paidAmt === undefined
+      ? method === 'Udhaar'
+        ? 0
+        : finalTotal
+      : round2(Number(paidAmt));
 
   const dueAmount = round2(Math.max(0, finalTotal - resolvedPaid));
 
@@ -79,13 +95,18 @@ export const deriveStatus = (paid, due, total) => {
  * @param {Array} salesForCustomer - filtered sales array
  */
 export const calcCustomerStats = (salesForCustomer = []) => {
-  const lifetimeValue = round2(salesForCustomer.reduce((a, s) => a + (Number(s.total) || Number(s.amt) || 0), 0));
-  const totalDue = round2(salesForCustomer.reduce((a, s) => a + Math.max(0, Number(s.due) || 0), 0));
+  const lifetimeValue = round2(
+    salesForCustomer.reduce((a, s) => a + (Number(s.total) || Number(s.amt) || 0), 0)
+  );
+  const totalDue = round2(
+    salesForCustomer.reduce((a, s) => a + Math.max(0, Number(s.due) || 0), 0)
+  );
   const totalPaid = round2(salesForCustomer.reduce((a, s) => a + (Number(s.paid) || 0), 0));
   const txnCount = salesForCustomer.length;
-  const lastVisit = salesForCustomer.length > 0
-    ? salesForCustomer.reduce((latest, s) => s.date > latest ? s.date : latest, '')
-    : null;
+  const lastVisit =
+    salesForCustomer.length > 0
+      ? salesForCustomer.reduce((latest, s) => (s.date > latest ? s.date : latest), '')
+      : null;
 
   const isRisky = totalDue > 500 || (txnCount > 0 && totalDue / lifetimeValue > 0.3);
 

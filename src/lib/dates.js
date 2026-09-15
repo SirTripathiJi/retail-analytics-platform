@@ -8,7 +8,11 @@ const pad = (n) => String(n).padStart(2, '0');
 export const toDateLabel = (iso) => {
   if (!iso) return '—';
   try {
-    return new Date(iso).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    return new Date(iso).toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
   } catch {
     return '—';
   }
@@ -29,8 +33,11 @@ export const toDateTime = (iso) => {
   if (!iso) return '—';
   try {
     return new Date(iso).toLocaleString('en-IN', {
-      day: '2-digit', month: 'short', year: 'numeric',
-      hour: '2-digit', minute: '2-digit',
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   } catch {
     return '—';
@@ -91,5 +98,4 @@ export const toYMD = (date = new Date()) =>
   `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 
 /** Get YYYY-MM string from a Date object */
-export const toYM = (date = new Date()) =>
-  `${date.getFullYear()}-${pad(date.getMonth() + 1)}`;
+export const toYM = (date = new Date()) => `${date.getFullYear()}-${pad(date.getMonth() + 1)}`;

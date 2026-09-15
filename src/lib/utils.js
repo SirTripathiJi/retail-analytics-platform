@@ -25,7 +25,9 @@ export const safeString = (val) => {
  * Normalizes search input by trimming and converting to lowercase.
  */
 export const normalizeSearch = (query) => {
-  return String(query || '').trim().toLowerCase();
+  return String(query || '')
+    .trim()
+    .toLowerCase();
 };
 
 /**

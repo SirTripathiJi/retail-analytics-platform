@@ -1,14 +1,63 @@
 import { deriveStatus, round2 } from '../lib/calc';
 
 export const DB = {
-  getUsers: () => JSON.parse(localStorage.getItem('as_users') || '[]'),
-  setUsers: (u) => localStorage.setItem('as_users', JSON.stringify(u)),
-  getSession: () => JSON.parse(localStorage.getItem('as_session') || 'null'),
-  setSession: (s) => localStorage.setItem('as_session', JSON.stringify(s)),
-  clearSession: () => localStorage.removeItem('as_session'),
+  getUsers: () => {
+    try {
+      return JSON.parse(localStorage.getItem('as_users') || '[]');
+    } catch {
+      return [];
+    }
+  },
+  setUsers: (u) => {
+    try {
+      localStorage.setItem('as_users', JSON.stringify(u));
+    } catch (e) {
+      console.error('Storage Error:', e);
+    }
+  },
+  getSession: () => {
+    try {
+      return JSON.parse(localStorage.getItem('as_session') || 'null');
+    } catch {
+      return null;
+    }
+  },
+  setSession: (s) => {
+    try {
+      localStorage.setItem('as_session', JSON.stringify(s));
+    } catch (e) {
+      console.error('Storage Error:', e);
+    }
+  },
+  clearSession: () => {
+    try {
+      localStorage.removeItem('as_session');
+    } catch (e) {
+      console.error('Storage Error:', e);
+    }
+  },
 
-  getProducts: (uid) => JSON.parse(localStorage.getItem(`as_p_${uid}`) || '[]'),
-  setProducts: (uid, p) => localStorage.setItem(`as_p_${uid}`, JSON.stringify(p)),
+  getProducts: (uid) => {
+    try {
+      const raw = JSON.parse(localStorage.getItem(`as_p_${uid}`) || '[]');
+      return raw.map((p) => ({
+        ...p,
+        quantity: p.quantity !== undefined ? p.quantity : p.qty !== undefined ? p.qty : 0,
+        expiry_date: p.expiry_date !== undefined ? p.expiry_date : p.expiry || '',
+        low_stock_threshold:
+          p.low_stock_threshold !== undefined ? p.low_stock_threshold : p.lowStock || 5,
+      }));
+    } catch {
+      return [];
+    }
+  },
+  setProducts: (uid, p) => {
+    try {
+      localStorage.setItem(`as_p_${uid}`, JSON.stringify(p));
+    } catch (e) {
+      console.error('Storage Error:', e);
+    }
+  },
 
   /**
    * getSales — migrates legacy single-item records on read.
@@ -16,29 +65,43 @@ export const DB = {
    * New:    { id, items[], total, paid, due, status, ... }
    */
   getSales: (uid) => {
-    const raw = JSON.parse(localStorage.getItem(`as_s_${uid}`) || '[]');
-    return raw.map((s) => {
-      // Migrate legacy records that lack the `items` array
-      if (!Array.isArray(s.items)) {
-        s.items = s.pid ? [{
-          id: String(s.pid),
-          pid: String(s.pid),
-          name: s.name || 'Unknown Item',
-          qty: Number(s.qty) || 1,
-          rate: Number(s.sell || s.rate || s.amt) || 0,
-          cost: Number(s.cost) || 0,
-        }] : [];
-      }
-      // Ensure monetary fields exist and are numbers
-      const total = Number(s.total || s.amt) || 0;
-      const paid  = Number(s.paid)  || (s.status === 'PAID' ? total : 0);
-      const due   = round2(Math.max(0, Number(s.due !== undefined ? s.due : total - paid)));
-      const status = deriveStatus(paid, due, total);
+    try {
+      const raw = JSON.parse(localStorage.getItem(`as_s_${uid}`) || '[]');
+      return raw.map((s) => {
+        // Migrate legacy records that lack the `items` array
+        if (!Array.isArray(s.items)) {
+          s.items = s.pid
+            ? [
+                {
+                  id: String(s.pid),
+                  pid: String(s.pid),
+                  name: s.name || 'Unknown Item',
+                  qty: Number(s.qty) || 1,
+                  rate: Number(s.sell || s.rate || s.amt) || 0,
+                  cost: Number(s.cost) || 0,
+                },
+              ]
+            : [];
+        }
+        // Ensure monetary fields exist and are numbers
+        const total = Number(s.total || s.amt) || 0;
+        const paid = Number(s.paid) || (s.status === 'PAID' ? total : 0);
+        const due = round2(Math.max(0, Number(s.due !== undefined ? s.due : total - paid)));
+        const status = deriveStatus(paid, due, total);
 
-      return { ...s, total, paid, due, status };
-    });
+        return { ...s, total, paid, due, status };
+      });
+    } catch {
+      return [];
+    }
   },
-  setSales: (uid, s) => localStorage.setItem(`as_s_${uid}`, JSON.stringify(s)),
+  setSales: (uid, s) => {
+    try {
+      localStorage.setItem(`as_s_${uid}`, JSON.stringify(s));
+    } catch (e) {
+      console.error('Storage Error:', e);
+    }
+  },
 
   /**
    * updateSale — atomically patch a single sale record by id.
@@ -67,8 +130,20 @@ export const DB = {
     return `INV-${maxNum + 1}`;
   },
 
-  getCustomers: (uid) => JSON.parse(localStorage.getItem(`as_c_${uid}`) || '[]'),
-  setCustomers: (uid, c) => localStorage.setItem(`as_c_${uid}`, JSON.stringify(c)),
+  getCustomers: (uid) => {
+    try {
+      return JSON.parse(localStorage.getItem(`as_c_${uid}`) || '[]');
+    } catch {
+      return [];
+    }
+  },
+  setCustomers: (uid, c) => {
+    try {
+      localStorage.setItem(`as_c_${uid}`, JSON.stringify(c));
+    } catch (e) {
+      console.error('Storage Error:', e);
+    }
+  },
 
   generateId: () => Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
 };

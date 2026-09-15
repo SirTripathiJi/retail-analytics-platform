@@ -38,13 +38,17 @@ export function Modal({ isOpen, onClose, title, children, actions }) {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          maxHeight: '90vh'
+          maxHeight: '90vh',
         }}
       >
         {/* Header */}
         <div className="px-8 pt-6 pb-4 flex items-center justify-between border-b-4 border-[var(--border-color)] bg-[var(--color-brand)] shrink-0">
-          {title && <h3 className="text-xl font-black text-[#111111] uppercase italic tracking-tighter">{title}</h3>}
-          <button 
+          {title && (
+            <h3 className="text-xl font-black text-[#111111] uppercase italic tracking-tighter">
+              {title}
+            </h3>
+          )}
+          <button
             onClick={onClose}
             className="w-10 h-10 flex items-center justify-center border-2 border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--text-primary)] shadow-[2px_2px_0_var(--shadow-color)] hover:bg-red-500 hover:text-[#ffffff] transition-all active:shadow-none"
           >

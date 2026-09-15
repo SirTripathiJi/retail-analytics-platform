@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AlertCircle, CheckCircle2, Info, X } from 'lucide-react';
 
 const ToastContext = createContext();
 
@@ -48,8 +48,10 @@ export function ToastProvider({ children }) {
               <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-[var(--bg-subtle)] flex items-center justify-center border border-[var(--border-color)]">
                 {getIcon(t.type)}
               </div>
-              <p className="flex-1 text-[13px] font-bold text-[var(--text)] leading-tight">{t.msg}</p>
-              <button 
+              <p className="flex-1 text-[13px] font-bold text-[var(--text)] leading-tight">
+                {t.msg}
+              </p>
+              <button
                 onClick={() => removeToast(t.id)}
                 className="p-1.5 rounded-lg hover:bg-[var(--surface2)] text-[var(--text3)] hover:text-[var(--text)] transition-colors"
               >

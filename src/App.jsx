@@ -12,29 +12,29 @@ import { ThemeProvider } from './context/ThemeContext';
 
 // Lazy-loaded pages (using relative paths for stability)
 const LandingPage = lazy(() =>
-  import('./pages/LandingPage').then((module) => ({ default: module.LandingPage }))
+  import('./pages/LandingPage.jsx').then((module) => ({ default: module.LandingPage }))
 );
 const AuthPage = lazy(() =>
-  import('./pages/AuthPage').then((module) => ({ default: module.AuthPage }))
+  import('./pages/AuthPage.jsx').then((module) => ({ default: module.AuthPage }))
 );
 const Dashboard = lazy(() =>
-  import('./pages/Dashboard').then((module) => ({ default: module.Dashboard }))
+  import('./pages/Dashboard.jsx').then((module) => ({ default: module.Dashboard }))
 );
 const Inventory = lazy(() =>
-  import('./pages/Inventory').then((module) => ({ default: module.Inventory }))
+  import('./pages/Inventory.jsx').then((module) => ({ default: module.Inventory }))
 );
-const Sales = lazy(() => import('./pages/Sales').then((module) => ({ default: module.Sales })));
+const Sales = lazy(() => import('./pages/Sales.jsx').then((module) => ({ default: module.Sales })));
 const Analytics = lazy(() =>
-  import('./pages/Analytics').then((module) => ({ default: module.Analytics }))
+  import('./pages/Analytics.jsx').then((module) => ({ default: module.Analytics }))
 );
 const Settings = lazy(() =>
-  import('./pages/Settings').then((module) => ({ default: module.Settings }))
+  import('./pages/Settings.jsx').then((module) => ({ default: module.Settings }))
 );
 const Customers = lazy(() =>
-  import('./pages/Customers').then((module) => ({ default: module.Customers }))
+  import('./pages/Customers.jsx').then((module) => ({ default: module.Customers }))
 );
 const Transactions = lazy(() =>
-  import('./pages/Transactions').then((module) => ({ default: module.Transactions }))
+  import('./pages/Transactions.jsx').then((module) => ({ default: module.Transactions }))
 );
 
 // Global Skeleton Loader for Suspense Fallback

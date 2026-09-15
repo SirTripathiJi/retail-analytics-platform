@@ -7,7 +7,8 @@
     "settings": "सेटिंग्स",
     "signout": "साइन आउट",
     "customers": "ग्राहक",
-    "transactions": "लेन-देन"
+    "transactions": "लेन-देन",
+    "launchApp": "ऐप लॉन्च करें"
   },
   "dashboard": {
     "totalSales": "कुल बिक्री",
@@ -27,7 +28,12 @@
     "deadStock": "डेड स्टॉक",
     "fastMoving": "तेजी से बिकने वाला",
     "noTransactions": "अभी तक कोई लेन-देन दर्ज नहीं किया गया है।",
-    "addTransactionCta": "यहां अपना नकद प्रवाह देखने के लिए बिक्री जोड़ें।"
+    "addTransactionCta": "यहां अपना नकद प्रवाह देखने के लिए बिक्री जोड़ें।",
+    "inventoryAlerts": "इन्वेंटरी अलर्ट (कार्रवाई आवश्यक)",
+    "allClear": "सब साफ़ है!",
+    "noActionRequired": "इस समय किसी इन्वेंटरी कार्रवाई की आवश्यकता नहीं है।",
+    "currentQuantity": "वर्तमान मात्रा",
+    "expiryDate": "समाप्ति तिथि"
   },
   "inventory": {
     "addProduct": "उत्पाद जोड़ें",
@@ -55,7 +61,11 @@
     "lowStock": "कम स्टॉक",
     "totalProducts": "कुल उत्पाद",
     "lowOutOfStock": "कम / खत्म स्टॉक",
-    "categories": "श्रेणियां"
+    "categories": "श्रेणियां",
+    "lowStockBadge": "कम स्टॉक",
+    "productNamePlaceholder": "प्रोडक्ट का नाम",
+    "categoryPlaceholder": "जैसे किराना, इलेक्ट्रॉनिक्स",
+    "generalCategory": "सामान्य"
   },
   "sales": {
     "newSale": "नई बिक्री",
@@ -101,7 +111,17 @@
     "close": "बंद करें",
     "customer": "ग्राहक",
     "balanceDueLabel": "बकाया राशि:",
-    "addedToKhata": "खाते में जोड़ा गया"
+    "addedToKhata": "खाते में जोड़ा गया",
+    "searchPlaceholder": "आइटम खोजें और जोड़ें...",
+    "marginPreview": "मार्जिन पूर्वावलोकन",
+    "itemNameLabel": "आइटम नाम",
+    "amountLabel": "राशि (₹)",
+    "outOfStockBadge": "स्टॉक ख़त्म",
+    "expiredBadge": "खत्म हो चुका",
+    "noProductsFound": "कोई उत्पाद नहीं मिला",
+    "poweredBy": "अर्थसाथी पीओएस द्वारा संचालित",
+    "thankYou": "आपके व्यवसाय के लिए धन्यवाद!",
+    "notesPlaceholder": "नोट्स (वैकल्पिक)..."
   },
   "customers": {
     "title": "ग्राहक",
@@ -139,7 +159,12 @@
     "phone": "फ़ोन",
     "lifetime": "कुल",
     "transactions": "लेन-देन",
-    "paymentMode": "भुगतान मोड"
+    "paymentMode": "भुगतान मोड",
+    "fullNamePlaceholder": "पूरा नाम",
+    "addressPlaceholder": "सड़क, शहर",
+    "notesPlaceholder": "इस ग्राहक के बारे में कोई नोट...",
+    "totalOutstanding": "कुल बकाया",
+    "dueLabel": "देय"
   },
   "transactions": {
     "title": "लेन-देन",
@@ -170,7 +195,8 @@
     "of": "का",
     "prev": "← पिछला",
     "next": "अगला →",
-    "viewInvoice": "इनवॉइस देखें"
+    "viewInvoice": "इनवॉइस देखें",
+    "partialBadge": "आंशिक"
   },
   "analytics": {
     "businessPerformance": "बिजनेस इंटेलिजेंस",
@@ -256,5 +282,63 @@
     "lowOutOfStock": "कम / खत्म स्टॉक",
     "expired": "समाप्त",
     "categories": "श्रेणियां"
+  },
+  "auth": {
+    "emailAddress": "मेल पता",
+    "password": "पासवर्ड",
+    "fullName": "पूरा नाम",
+    "businessEmail": "बिजनेस ईमेल",
+    "storeName": "स्टोर नाम",
+    "createPassword": "पासवर्ड बनाएं",
+    "logIn": "लॉग इन करें",
+    "signUp": "साइन अप करें",
+    "signInBtn": "डैशबोर्ड में साइन इन करें",
+    "createAccountBtn": "खाता बनाएं",
+    "requiredFields": "आवश्यक फ़ील्ड गायब हैं",
+    "invalidCredentials": "अवैध प्रत्यय पत्र",
+    "allFieldsRequired": "सभी फ़ील्ड आवश्यक हैं",
+    "passwordTooShort": "पासवर्ड बहुत छोटा है",
+    "accountExists": "खाता पहले से मौजूद है",
+    "namePlaceholder": "राहुल शर्मा",
+    "storePlaceholder": "शर्मा रिटेलर्स",
+    "minCharsPlaceholder": "न्यूनतम. 6 अक्षर"
+  },
+  "landing": {
+    "dailyShop": "दैनिक दुकान संचालन के लिए",
+    "premiumIntelligence": "प्रीमियम इंटेलिजेंस",
+    "privacy": "गोपनीयता",
+    "terms": "शर्तें",
+    "support": "सहायता",
+    "pricing": "मूल्य निर्धारण",
+    "getStarted": "शुरू हो जाओ",
+    "heroTitle1": "अपना व्यवसाय चलाओ",
+    "heroTitle2": "स्पष्टता के साथ.",
+    "heroSub1": "इन्वेंट्री पर नज़र रखें, बिक्री रिकॉर्ड करें और अपना सटीक लाभ जानें - बिना किसी भ्रम के।",
+    "heroSub2": "वास्तविक दुकानदारों के लिए बनाया गया। तेज़। ऑफ़लाइन. भरोसेमंद।",
+    "heroPlan": "₹399/माह से शुरू होने वाले प्लान · किसी भी समय रद्द करें · पूरी तरह ऑफ़लाइन काम करता है।",
+    "featureInventory": "सूची नियंत्रण",
+    "featureInventoryDesc": "सटीक रहें, नुकसान से बचें, और कभी भी पुनः स्टॉक न चूकें।",
+    "featureBilling": "बिलिंग को सरल बनाया गया",
+    "featureBillingDesc": "त्वरित, वास्तविक लाभ दृश्यता के साथ तेज़ प्रविष्टियाँ।",
+    "featureInsights": "व्यावसायिक अंतर्दृष्टि",
+    "featureInsightsDesc": "प्रदर्शन को स्पष्ट रूप से समझें. कोई शोर नहीं, बस उपयोगी डेटा।",
+    "featurePrivacy": "गोपनीयता-प्रथम",
+    "featurePrivacyDesc": "100% स्थानीय डेटा भंडारण। कोई क्लाउड नहीं, कोई सदस्यता नहीं.",
+    "featureAssistant": "स्मार्ट सहायक",
+    "featureAssistantDesc": "आपके डेटा के आधार पर सरल व्यावसायिक मार्गदर्शन।",
+    "featureVoice": "ध्वनि प्रविष्टियाँ",
+    "featureVoiceDesc": "स्वाभाविक रूप से बोलकर लेनदेन जोड़ें।",
+    "featureProfit": "लाभ बुद्धि",
+    "featureProfitDesc": "लागत और खर्च के बाद सच्चा लाभ देखें।",
+    "featureCustomers": "ग्राहक अंतर्दृष्टि",
+    "featureCustomersDesc": "विश्वसनीय और जोखिम भरे ग्राहकों की पहचान करें।",
+    "trust1": "डिज़ाइन द्वारा विश्वसनीय",
+    "trust1Desc": "वास्तविक दैनिक दुकान संचालन के लिए निर्मित।",
+    "trust2": "पूर्ण डेटा नियंत्रण",
+    "trust2Desc": "आपका डेटा निजी और सुलभ रहता है।",
+    "trust3": "लचीला और स्केलेबल",
+    "trust3Desc": "जैसे-जैसे आपका व्यवसाय बढ़ता है, वैसे-वैसे बढ़ता जाता है।",
+    "trust4": "दैनिक उपयोग के लिए तैयार",
+    "trust4Desc": "हर दिन तेज़, स्पष्ट और भरोसेमंद।"
   }
 }

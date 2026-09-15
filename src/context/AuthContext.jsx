@@ -9,11 +9,16 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const session = DB.getSession();
-    if (session && session.uid) {
-      setUser(session);
+    try {
+      const session = DB.getSession();
+      if (session && (session.uid || session.id)) {
+        setUser(session);
+      }
+    } catch (err) {
+      console.error('Failed to restore session:', err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   const login = (userData) => {

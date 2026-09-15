@@ -7,7 +7,8 @@
     "settings": "Settings",
     "signout": "Sign Out",
     "customers": "Customers",
-    "transactions": "Transactions"
+    "transactions": "Transactions",
+    "launchApp": "Launch App"
   },
   "dashboard": {
     "totalSales": "Total Sales",
@@ -27,7 +28,12 @@
     "deadStock": "Dead Stock",
     "fastMoving": "Fast Moving",
     "noTransactions": "No transactions recorded yet.",
-    "addTransactionCta": "Add a sale to see your cashflow here."
+    "addTransactionCta": "Add a sale to see your cashflow here.",
+    "inventoryAlerts": "Inventory Alerts (Action Required)",
+    "allClear": "All Clear!",
+    "noActionRequired": "No inventory actions required at this time.",
+    "currentQuantity": "Current Quantity",
+    "expiryDate": "Expiry Date"
   },
   "inventory": {
     "addProduct": "Add Product",
@@ -55,7 +61,11 @@
     "lowStock": "Low Stock",
     "totalProducts": "Total Products",
     "lowOutOfStock": "Low / Out of Stock",
-    "categories": "Categories"
+    "categories": "Categories",
+    "lowStockBadge": "Low Stock",
+    "productNamePlaceholder": "Product name",
+    "categoryPlaceholder": "e.g. Grocery, Electronics",
+    "generalCategory": "General"
   },
   "sales": {
     "newSale": "New Sale",
@@ -101,7 +111,17 @@
     "close": "Close",
     "customer": "Customer",
     "balanceDueLabel": "Balance Due:",
-    "addedToKhata": "added to khata"
+    "addedToKhata": "added to khata",
+    "searchPlaceholder": "Search & add items...",
+    "marginPreview": "Margin Preview",
+    "itemNameLabel": "Item Name",
+    "amountLabel": "Amount (₹)",
+    "outOfStockBadge": "Out of Stock",
+    "expiredBadge": "Expired",
+    "noProductsFound": "No products found",
+    "poweredBy": "Powered by ArthSathi POS",
+    "thankYou": "Thank you for your business!",
+    "notesPlaceholder": "Notes (optional)..."
   },
   "customers": {
     "title": "Customers",
@@ -139,7 +159,15 @@
     "phone": "Phone",
     "lifetime": "Lifetime",
     "transactions": "Transactions",
-    "paymentMode": "Payment Mode"
+    "paymentMode": "Payment Mode",
+    "fullNamePlaceholder": "Full Name",
+    "addressPlaceholder": "Street, City",
+    "notesPlaceholder": "Any notes about this customer...",
+    "totalOutstanding": "Total Outstanding",
+    "cleared": "Cleared",
+    "regular": "Regular",
+    "noTransactionsYet": "No transactions yet",
+    "dueLabel": "Due"
   },
   "transactions": {
     "title": "Transactions",
@@ -170,7 +198,8 @@
     "of": "of",
     "prev": "← Prev",
     "next": "Next →",
-    "viewInvoice": "View Invoice"
+    "viewInvoice": "View Invoice",
+    "partialBadge": "Partial"
   },
   "analytics": {
     "businessPerformance": "Business Intelligence",
@@ -256,5 +285,63 @@
     "lowOutOfStock": "Low / Out of Stock",
     "expired": "Expired",
     "categories": "Categories"
+  },
+  "auth": {
+    "emailAddress": "Email Address",
+    "password": "Password",
+    "fullName": "Full Name",
+    "businessEmail": "Business Email",
+    "storeName": "Store Name",
+    "createPassword": "Create Password",
+    "logIn": "Log In",
+    "signUp": "Sign Up",
+    "signInBtn": "Sign In to Dashboard",
+    "createAccountBtn": "Create Account",
+    "requiredFields": "Required fields missing",
+    "invalidCredentials": "Invalid credentials",
+    "allFieldsRequired": "All fields are required",
+    "passwordTooShort": "Password too short",
+    "accountExists": "Account already exists",
+    "namePlaceholder": "Rahul Sharma",
+    "storePlaceholder": "Sharma Retailers",
+    "minCharsPlaceholder": "Min. 6 characters"
+  },
+  "landing": {
+    "dailyShop": "For daily shop operations",
+    "premiumIntelligence": "Premium intelligence",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "support": "Support",
+    "pricing": "Pricing",
+    "getStarted": "Get Started",
+    "heroTitle1": "Run your business",
+    "heroTitle2": "with clarity.",
+    "heroSub1": "Track inventory, record sales, and know your exact profit — without confusion.",
+    "heroSub2": "Everything your business needs, in one place.",
+    "heroPlan": "Plans from ₹399/month · Cancel anytime · Works fully offline.",
+    "featureInventory": "Inventory Control",
+    "featureInventoryDesc": "Stay accurate, avoid losses, and never miss a restock.",
+    "featureBilling": "Billing Made Simple",
+    "featureBillingDesc": "Fast entries with instant, real profit visibility.",
+    "featureInsights": "Business Insights",
+    "featureInsightsDesc": "Understand performance clearly. No noise, just useful data.",
+    "featurePrivacy": "Privacy-First",
+    "featurePrivacyDesc": "100% local data storage. No cloud, no subscriptions.",
+    "featureAssistant": "Smart Assistant",
+    "featureAssistantDesc": "Simple business guidance based on your data.",
+    "featureVoice": "Voice Entries",
+    "featureVoiceDesc": "Add transactions by speaking naturally.",
+    "featureProfit": "Profit Intelligence",
+    "featureProfitDesc": "See true profit after cost and expenses.",
+    "featureCustomers": "Customer Insights",
+    "featureCustomersDesc": "Identify reliable and risky customers.",
+    "trust1": "Reliable by Design",
+    "trust1Desc": "Built for real daily shop operations.",
+    "trust2": "Complete Data Control",
+    "trust2Desc": "Your data stays private and accessible.",
+    "trust3": "Flexible & Scalable",
+    "trust3Desc": "Grows as your business grows.",
+    "trust4": "Daily-Use Ready",
+    "trust4Desc": "Fast, clear, and dependable every day."
   }
 }

@@ -1,7 +1,22 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
 const LanguageContext = createContext();
-export const useLanguage = () => useContext(LanguageContext);
+
+export const useLanguage = () => {
+  const context = useContext(LanguageContext);
+  if (!context) {
+    // Safe fallback if used outside provider
+    return {
+      t: (key, defaultText) => defaultText ?? key,
+      lang: 'en',
+      changeLanguage: () => {},
+      LANGS: ['en'],
+      LANG_NAMES: { en: 'English' },
+    };
+  }
+  return context;
+};
+
 export const useTranslation = useLanguage;
 
 // Dynamically import all JSON locales
@@ -22,7 +37,7 @@ export const LANG_NAMES = {
   kn: 'ಕನ್ನಡ',
   gu: 'ગુજરાતી',
   pa: 'ਪੰਜਾਬੀ',
-  ur: 'اردو'
+  ur: 'اردو',
 };
 
 // Helper to resolve nested keys like "nav.inventory"
@@ -50,7 +65,9 @@ export function LanguageProvider({ children }) {
   };
 
   return (
-    <LanguageContext.Provider value={{ lang, changeLanguage, t, LANGS: Object.keys(ALL), LANG_NAMES }}>
+    <LanguageContext.Provider
+      value={{ lang, changeLanguage, t, LANGS: Object.keys(ALL), LANG_NAMES }}
+    >
       {children}
     </LanguageContext.Provider>
   );
