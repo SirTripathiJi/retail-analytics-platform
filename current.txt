@@ -1,0 +1,33 @@
+Stop writing prompts, plans for prompts, or instructions for another AI. Your task is to directly analyze the existing `retail-analytics-platform` codebase and mentor us.
+
+Act as a senior full-stack developer and teacher. Inspect the actual project files, understand how the application works, and give us a detailed, beginner-friendly technical audit.
+
+**Do not modify, create, delete, or rewrite any files. Do not install dependencies.**
+
+We know HTML, CSS, React, Tailwind, Node.js, Express, and Python for DSA. We plan to learn MongoDB later.
+
+### What to do now
+
+1. **Inspect the entire codebase.** Read the source files, components, utilities, configuration, dependencies, and existing tests. Trace how the application starts, how its pages connect, and how inventory and billing data work.
+
+2. **Explain our current project.** Tell us what is actually implemented, what works, what is incomplete, what is broken, and what is only a UI mockup. Support findings with exact filenames and relevant code references.
+
+3. **Identify our technical gaps.** Explain what we are missing in backend development, Express APIs, database integration, data validation, authentication, security, and testing. Distinguish confirmed issues from possible future risks.
+
+4. **Teach us what to do next.** Give us an ordered development roadmap, starting with the simplest backend concepts and progressing toward MongoDB integration. Explain each task in easy language, including why we need it, which files it affects, and how to verify it works.
+
+5. **Guide us through the actual code.** Explain our existing architecture and show where future backend functionality should connect to the React frontend. Recommend a suitable folder structure, but do not create it.
+
+6. **Be critical and practical.** Prioritize the core inventory, billing, and transaction workflows. Do not jump to advanced analytics, AI features, or deployment before the fundamentals are reliable.
+
+7. **Run safe existing checks where possible.** Report the exact commands and results. Do not claim something works unless you have verified it. Avoid commands that change project files.
+
+### How to respond
+
+Give us the audit and teaching directly in your response, not another prompt or a generic checklist.
+
+Start with a clear explanation of the current state of our actual codebase. Then proceed through the architecture, feature verification, technical gaps, and a phased roadmap.
+
+Assume we are beginners at backend development. Explain unfamiliar terms with simple examples from our shop-management application.
+
+**Your final goal:** After reading your report, our team should understand exactly what we have built, what is wrong or missing, what we need to learn, and the precise next steps to turn this frontend-first project into a working full-stack application.

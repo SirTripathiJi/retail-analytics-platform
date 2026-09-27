@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   FileText,
@@ -12,23 +11,19 @@ import {
 } from 'lucide-react';
 
 import { useAuth } from '../../context/AuthContext';
+import { useData } from '../../context/DataContext';
 import { useTranslation } from '../../context/LanguageContext';
-import { DB } from '../../services/db';
 import { Logo } from '../UI/Logo';
 
 export function Sidebar({ isOpen, toggleSidebar }) {
   const { user, logout } = useAuth();
   const { t = (k) => k } = useTranslation();
-  const [lowStockCount, setLowStockCount] = useState(0);
-
-  useEffect(() => {
-    if (user?.uid) {
-      const products = DB.getProducts(user.uid);
-      setLowStockCount(
-        products.filter((x) => Number(x.qty) <= Number(x.lowStock) && Number(x.qty) > 0).length
-      );
-    }
-  }, [user]);
+  const { products } = useData();
+  const lowStockCount = products.filter(
+    (product) =>
+      Number(product.quantity) > 0 &&
+      Number(product.quantity) <= Number(product.low_stock_threshold ?? 5)
+  ).length;
 
   const nav = [
     { to: '/dashboard', icon: LayoutDashboard, label: t('nav.overview') },
@@ -58,28 +53,31 @@ export function Sidebar({ isOpen, toggleSidebar }) {
 
         {/* Nav */}
         <nav className="flex-1 px-4 py-8 flex flex-col gap-2 overflow-y-auto">
-          {nav.map(({ to, icon: Icon, label, badge }) => (
-            <NavLink
-              key={to}
-              to={to}
-              onClick={() => toggleSidebar(false)}
-              className={({ isActive }) =>
-                `flex items-center gap-5 px-5 py-4 font-black text-base border-2 border-transparent transition-all group ${
-                  isActive
-                    ? 'bg-[var(--color-brand)] text-[#111111] shadow-[5px_5px_0_var(--shadow-color)]'
-                    : 'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] hover:border-[var(--border-color)] hover:shadow-[5px_5px_0_var(--shadow-color)]'
-                }`
-              }
-            >
-              <Icon className="w-6 h-6" />
-              <span className="flex-1 uppercase tracking-normal">{label}</span>
-              {badge > 0 && (
-                <span className="bg-[var(--color-secondary)] text-[#ffffff] text-xs font-black px-2.5 py-1 border-2 border-[var(--border-color)]">
-                  {badge}
-                </span>
-              )}
-            </NavLink>
-          ))}
+          {nav.map((item) => {
+            const Icon = item.icon;
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                onClick={() => toggleSidebar(false)}
+                className={({ isActive }) =>
+                  `flex items-center gap-5 px-5 py-4 font-black text-base border-2 border-transparent transition-all group ${
+                    isActive
+                      ? 'bg-[var(--color-brand)] text-[#111111] shadow-[5px_5px_0_var(--shadow-color)]'
+                      : 'text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] hover:border-[var(--border-color)] hover:shadow-[5px_5px_0_var(--shadow-color)]'
+                  }`
+                }
+              >
+                <Icon className="w-6 h-6" />
+                <span className="flex-1 uppercase tracking-normal">{item.label}</span>
+                {item.badge > 0 && (
+                  <span className="bg-[var(--color-secondary)] text-[#ffffff] text-xs font-black px-2.5 py-1 border-2 border-[var(--border-color)]">
+                    {item.badge}
+                  </span>
+                )}
+              </NavLink>
+            );
+          })}
         </nav>
 
         {/* User footer */}

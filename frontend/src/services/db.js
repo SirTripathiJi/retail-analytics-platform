@@ -1,4 +1,4 @@
-import { deriveStatus, round2 } from '../lib/calc';
+import { deriveStatus, round2 } from '../lib/calc.js';
 
 export const DB = {
   getUsers: () => {

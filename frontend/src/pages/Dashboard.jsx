@@ -220,7 +220,9 @@ export function Dashboard() {
                     <span className="text-[var(--text-secondary)] uppercase tracking-tighter">
                       {t('dashboard.currentQuantity', 'Current Quantity')}
                     </span>
-                    <span className="font-black text-sm text-[var(--text-primary)]">{alert.quantity}</span>
+                    <span className="font-black text-sm text-[var(--text-primary)]">
+                      {alert.quantity}
+                    </span>
                   </div>
                   {alert.expiry_date && (
                     <div className="flex justify-between items-center text-xs font-bold">

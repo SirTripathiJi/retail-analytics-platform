@@ -22,7 +22,6 @@ import { useData } from '../context/DataContext';
 import { useTranslation } from '../context/LanguageContext';
 import { calcInvoice, formatCurrency, round2 } from '../lib/calc';
 import { isExpired } from '../lib/dates';
-import { DB } from '../services/db';
 
 const PAYMENT_MODES = ['Cash', 'UPI', 'Card', 'Udhaar'];
 
@@ -58,7 +57,7 @@ export function Sales() {
     () => calcInvoice(cart, discountPercent, taxPercent, paid, paymentMethod),
     [cart, discountPercent, taxPercent, paid, paymentMethod]
   );
-  const { subtotal, discountAmount, taxAmount, finalTotal, paidAmount, dueAmount, status } = calc;
+  const { subtotal, discountAmount, taxAmount, finalTotal, paidAmount, dueAmount } = calc;
 
   // ─── ITEM SEARCH ──────────────────────────────────────────
   const filteredProducts = useMemo(() => {
@@ -187,47 +186,38 @@ export function Sales() {
   };
 
   // ─── CONFIRM SALE ─────────────────────────────────────────
-  const confirmBill = useCallback(() => {
+  const confirmBill = useCallback(async () => {
     if (cart.length === 0) return toast.error('Cart is empty');
     if (paymentMethod === 'Udhaar' && !customerId)
       return toast.error('Select a customer for Udhaar payment');
     if (dueAmount > 0 && !customerId) return toast.error('Select a customer to record balance due');
 
     const selectedCustomer = customers.find((c) => String(c.id) === String(customerId));
-    const invId = DB.getNextInvoiceId(user.uid);
-
     const invoice = {
-      id: invId,
-      date: new Date().toISOString(),
       customerId: customerId || null,
       customerName: selectedCustomer ? selectedCustomer.name : 'Walk-in',
       customerPhone: selectedCustomer?.phone || '',
       items: cart,
-      subtotal,
-      discount: discountAmount,
       discountPercent: Number(discountPercent),
-      tax: taxAmount,
       taxPercent: Number(taxPercent),
-      total: finalTotal,
       paid: paidAmount,
-      due: dueAmount,
       paymentMethod,
-      status,
-      profit: round2(
-        cart.reduce((a, i) => a + (Number(i.rate) - Number(i.cost)) * Number(i.qty), 0) -
-          discountAmount
-      ),
       notes: notes.trim(),
-      _createdAt: new Date().toISOString(),
     };
 
-    confirmSale(invoice, cart);
+    let savedInvoice;
+    try {
+      savedInvoice = await confirmSale(invoice, cart);
+    } catch (error) {
+      toast.error(error.message || 'Could not complete this sale');
+      return;
+    }
 
-    setLastInvoice(invoice);
+    setLastInvoice(savedInvoice);
     setIsReceiptModalOpen(true);
     clearCart();
 
-    toast.success(`Invoice ${invId} generated`);
+    toast.success(`Invoice ${savedInvoice.id} generated`);
     confetti({
       particleCount: 120,
       spread: 70,
@@ -240,19 +230,13 @@ export function Sales() {
     customerId,
     dueAmount,
     customers,
-    subtotal,
-    discountAmount,
-    taxAmount,
-    finalTotal,
     paidAmount,
-    status,
     discountPercent,
     taxPercent,
     notes,
     confirmSale,
     clearCart,
     toast,
-    user,
   ]);
 
   return (

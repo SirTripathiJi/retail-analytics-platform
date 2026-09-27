@@ -5,7 +5,9 @@
  */
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
-import { calcCustomerStats, round2 } from '../lib/calc';
+import { calcCustomerStats } from '../lib/calc';
+import { settleSalesDues } from '../lib/payments';
+import { productApi, saleApi } from '../services/api';
 import { DB } from '../services/db';
 
 import { useAuth } from './AuthContext';
@@ -14,77 +16,91 @@ const DataContext = createContext(null);
 
 export function DataProvider({ children }) {
   const { user } = useAuth();
+  const userId = user?.uid;
 
   const [products, setProducts] = useState([]);
   const [sales, setSales] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [productsError, setProductsError] = useState('');
 
   // Load all data for the current user
-  const loadAll = useCallback(() => {
-    if (!user?.uid) {
+  const loadAll = useCallback(async () => {
+    if (!userId) {
+      setProducts([]);
+      setSales([]);
+      setCustomers([]);
       setIsLoading(false);
       return;
     }
-    setProducts(DB.getProducts(user.uid));
-    setSales(DB.getSales(user.uid));
-    setCustomers(DB.getCustomers(user.uid));
-    setIsLoading(false);
-  }, [user?.uid]);
+    setIsLoading(true);
+    setProductsError('');
+    const localSales = DB.getSales(userId);
+    setSales(localSales);
+    setCustomers(DB.getCustomers(userId));
+    try {
+      setProducts(await productApi.list());
+    } catch (error) {
+      setProducts([]);
+      setProductsError(error.message || 'Could not load inventory');
+    } finally {
+      setIsLoading(false);
+    }
+    try {
+      const remoteSales = await saleApi.list();
+      const localIds = new Set(localSales.map((sale) => String(sale.id)));
+      setSales([...localSales, ...remoteSales.filter((sale) => !localIds.has(String(sale.id)))]);
+    } catch {
+      // Keep previously saved local transaction history available offline.
+    }
+  }, [userId]);
 
   useEffect(() => {
     loadAll();
   }, [loadAll]);
 
-  const refreshProducts = useCallback(() => {
-    if (user?.uid) setProducts(DB.getProducts(user.uid));
-  }, [user?.uid]);
+  const refreshProducts = useCallback(async () => {
+    if (!userId) return;
+    setIsLoading(true);
+    setProductsError('');
+    try {
+      setProducts(await productApi.list());
+    } catch (error) {
+      setProductsError(error.message || 'Could not load inventory');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [userId]);
 
   const refreshSales = useCallback(() => {
-    if (user?.uid) setSales(DB.getSales(user.uid));
-  }, [user?.uid]);
+    if (userId) setSales(DB.getSales(userId));
+  }, [userId]);
 
   const refreshCustomers = useCallback(() => {
-    if (user?.uid) setCustomers(DB.getCustomers(user.uid));
-  }, [user?.uid]);
+    if (userId) setCustomers(DB.getCustomers(userId));
+  }, [userId]);
 
-  const refreshAll = useCallback(() => {
-    if (!user?.uid) return;
-    setProducts(DB.getProducts(user.uid));
-    setSales(DB.getSales(user.uid));
-    setCustomers(DB.getCustomers(user.uid));
-  }, [user?.uid]);
+  const refreshAll = useCallback(() => loadAll(), [loadAll]);
 
-  /**
-   * confirmSale — atomic multi-table write:
-   * 1. Deduct stock from products
-   * 2. Add invoice to sales
-   * 3. Returns the saved invoice
-   */
+  /** Create a validated server-side sale, then refresh shared UI state. */
   const confirmSale = useCallback(
-    (invoice, cartItems) => {
-      if (!user?.uid) return null;
-
-      // 1. Deduct inventory stock
-      const updatedProducts = DB.getProducts(user.uid).map((p) => {
-        const cartItem = cartItems.find((c) => !c.isCustom && String(c.id) === String(p.id));
-        if (cartItem) {
-          return { ...p, quantity: Math.max(0, Number(p.quantity) - Number(cartItem.qty)) };
-        }
-        return p;
-      });
-      DB.setProducts(user.uid, updatedProducts);
-      setProducts(updatedProducts);
-
-      // 2. Add invoice to sales
-      const existingSales = DB.getSales(user.uid);
-      existingSales.push(invoice);
-      DB.setSales(user.uid, existingSales);
-      setSales([...existingSales]);
-
-      return invoice;
+    async (invoice, cartItems) => {
+      if (!userId) throw new Error('Sign in before creating a sale');
+      const savedSale = await saleApi.create({ ...invoice, items: cartItems });
+      const existingSales = DB.getSales(userId);
+      const updatedSales = [
+        ...existingSales.filter((sale) => String(sale.id) !== String(savedSale.id)),
+        savedSale,
+      ];
+      DB.setSales(userId, updatedSales);
+      setSales((current) => [
+        ...current.filter((sale) => String(sale.id) !== String(savedSale.id)),
+        savedSale,
+      ]);
+      await refreshProducts();
+      return savedSale;
     },
-    [user?.uid]
+    [userId, refreshProducts]
   );
 
   /**
@@ -94,76 +110,54 @@ export function DataProvider({ children }) {
    */
   const settleCustomerDues = useCallback(
     (customerId, amountToPay, method) => {
-      if (!user?.uid) return 0;
-      let amountLeft = round2(Number(amountToPay));
+      if (!userId) return 0;
+      const allSales = DB.getSales(userId);
+      const { sales: updatedSales, remaining } = settleSalesDues(
+        allSales,
+        customerId,
+        amountToPay,
+        method,
+        new Date().toISOString()
+      );
 
-      const allSales = DB.getSales(user.uid);
-      const updatedSales = allSales.map((s) => {
-        if (String(s.customerId) !== String(customerId)) return s;
-        if (!(s.due > 0) || amountLeft <= 0) return s;
-
-        const payment = Math.min(round2(s.due), amountLeft);
-        const newDue = round2(s.due - payment);
-        const newPaid = round2((Number(s.paid) || 0) + payment);
-        amountLeft = round2(amountLeft - payment);
-
-        return {
-          ...s,
-          due: newDue,
-          paid: newPaid,
-          status: newDue <= 0 ? 'PAID' : 'PARTIAL',
-          paymentMethod: method,
-          _settledAt: new Date().toISOString(),
-        };
-      });
-
-      DB.setSales(user.uid, updatedSales);
+      DB.setSales(userId, updatedSales);
       setSales([...updatedSales]);
-      return amountLeft; // 0 = fully cleared, >0 = surplus/advance
+      return remaining; // 0 = fully cleared, >0 = surplus/advance
     },
-    [user?.uid]
+    [userId]
   );
 
   /**
    * deleteProduct — remove product and return updated list.
    */
-  const deleteProduct = useCallback(
-    (productId) => {
-      if (!user?.uid) return;
-      const updated = DB.getProducts(user.uid).filter((p) => String(p.id) !== String(productId));
-      DB.setProducts(user.uid, updated);
-      setProducts(updated);
-    },
-    [user?.uid]
-  );
+  const deleteProduct = useCallback(async (productId) => {
+    await productApi.remove(productId);
+    setProducts((current) => current.filter((product) => String(product.id) !== String(productId)));
+  }, []);
 
   /**
    * saveProduct — add or update a product.
    */
-  const saveProduct = useCallback(
-    (productData, editId = null) => {
-      if (!user?.uid) return;
-      let updated = DB.getProducts(user.uid);
-      if (editId) {
-        updated = updated.map((p) =>
-          String(p.id) === String(editId) ? { ...p, ...productData } : p
-        );
-      } else {
-        updated.push({ ...productData, id: String(Date.now()) });
-      }
-      DB.setProducts(user.uid, updated);
-      setProducts(updated);
-    },
-    [user?.uid]
-  );
+  const saveProduct = useCallback(async (productData, editId = null) => {
+    const saved = editId
+      ? await productApi.update(editId, productData)
+      : await productApi.create(productData);
+    setProducts((current) =>
+      editId
+        ? current.map((product) => (String(product.id) === String(editId) ? saved : product))
+        : [...current, saved]
+    );
+    setProductsError('');
+    return saved;
+  }, []);
 
   /**
    * saveCustomer — add or update a customer.
    */
   const saveCustomer = useCallback(
     (customerData, editId = null) => {
-      if (!user?.uid) return;
-      let updated = DB.getCustomers(user.uid);
+      if (!userId) return;
+      let updated = DB.getCustomers(userId);
       if (editId) {
         updated = updated.map((c) =>
           String(c.id) === String(editId) ? { ...c, ...customerData } : c
@@ -171,10 +165,10 @@ export function DataProvider({ children }) {
       } else {
         updated.push({ ...customerData, id: String(Date.now()) });
       }
-      DB.setCustomers(user.uid, updated);
+      DB.setCustomers(userId, updated);
       setCustomers([...updated]);
     },
-    [user?.uid]
+    [userId]
   );
 
   /**
@@ -182,12 +176,12 @@ export function DataProvider({ children }) {
    */
   const deleteCustomer = useCallback(
     (customerId) => {
-      if (!user?.uid) return;
-      const updated = DB.getCustomers(user.uid).filter((c) => String(c.id) !== String(customerId));
-      DB.setCustomers(user.uid, updated);
+      if (!userId) return;
+      const updated = DB.getCustomers(userId).filter((c) => String(c.id) !== String(customerId));
+      DB.setCustomers(userId, updated);
       setCustomers([...updated]);
     },
-    [user?.uid]
+    [userId]
   );
 
   /**
@@ -205,17 +199,18 @@ export function DataProvider({ children }) {
    * resetAllData — wipe products and sales for the current user.
    */
   const resetAllData = useCallback(() => {
-    if (!user?.uid) return;
-    DB.setProducts(user.uid, []);
-    DB.setSales(user.uid, []);
-    DB.setCustomers(user.uid, []);
+    if (!userId) return;
+    DB.setProducts(userId, []);
+    DB.setSales(userId, []);
+    DB.setCustomers(userId, []);
     setProducts([]);
     setSales([]);
     setCustomers([]);
-  }, [user?.uid]);
+  }, [userId]);
 
   const value = {
     products,
+    productsError,
     sales,
     customers,
     isLoading,

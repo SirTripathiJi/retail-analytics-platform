@@ -14,7 +14,7 @@ export const safeString = (val) => {
   if (typeof val === 'object') {
     try {
       return JSON.stringify(val).toLowerCase();
-    } catch (e) {
+    } catch {
       return '';
     }
   }

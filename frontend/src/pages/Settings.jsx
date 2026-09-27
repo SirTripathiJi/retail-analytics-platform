@@ -4,7 +4,6 @@ import { AlertTriangle, Globe, Moon, ShieldCheck, Sun, Trash2 } from 'lucide-rea
 
 import { Modal } from '../components/UI/Modal';
 import { useToast } from '../components/UI/ToastContext';
-import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
 import { useTranslation } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
@@ -128,7 +127,9 @@ export function Settings() {
           <h4 className="font-black text-2xl uppercase italic tracking-tighter mb-3 text-[#f5f5f5]">
             {t('settings.trust')}
           </h4>
-          <p className="text-base font-bold opacity-70 leading-tight text-[#cccccc]">{t('settings.support')}</p>
+          <p className="text-base font-bold opacity-70 leading-tight text-[#cccccc]">
+            {t('settings.support')}
+          </p>
         </div>
       </div>
 
