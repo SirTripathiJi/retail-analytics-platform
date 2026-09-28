@@ -23,7 +23,8 @@ const SortIcon = ({ field, sortField, sortAsc }) => {
 export function Inventory() {
   const toast = useToast();
   const { t = (k) => k } = useTranslation();
-  const { products, saveProduct, deleteProduct } = useData();
+  const { products, saveProduct, deleteProduct, productsError, isLoading, refreshProducts } =
+    useData();
 
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('All');
@@ -87,7 +88,6 @@ export function Inventory() {
     }
   };
 
-
   const openAddModal = () => {
     setEditId(null);
     setFormData({
@@ -116,13 +116,17 @@ export function Inventory() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (!window.confirm('Delete this product permanently?')) return;
-    deleteProduct(id);
-    toast.success('Product removed');
+    try {
+      await deleteProduct(id);
+      toast.success('Product removed');
+    } catch (error) {
+      toast.error(error.message || 'Could not remove product');
+    }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const { name, cost, sell, quantity, low_stock_threshold, category, expiry_date } = formData;
     const c = Number(cost),
       s = Number(sell),
@@ -148,17 +152,25 @@ export function Inventory() {
       low_stock_threshold: l,
       expiry_date,
     };
-    saveProduct(productData, editId);
-    toast.success(editId ? 'Product updated' : 'Product added');
-    setIsModalOpen(false);
+    try {
+      await saveProduct(productData, editId);
+      toast.success(editId ? 'Product updated' : 'Product added');
+      setIsModalOpen(false);
+    } catch (error) {
+      toast.error(error.message || 'Could not save product');
+    }
   };
 
   // Quick stock adjust
-  const adjustStock = (id, delta) => {
+  const adjustStock = async (id, delta) => {
     const p = products.find((p) => String(p.id) === String(id));
     if (!p) return;
     const newQty = Math.max(0, Number(p.quantity) + delta);
-    saveProduct({ ...p, quantity: newQty }, id);
+    try {
+      await saveProduct({ ...p, quantity: newQty }, id);
+    } catch (error) {
+      toast.error(error.message || 'Could not update stock');
+    }
   };
 
   const f = (v) => formData[v];
@@ -193,6 +205,23 @@ export function Inventory() {
           <span>{t('inventory.addProduct')}</span>
         </button>
       </div>
+
+      {isLoading && (
+        <p className="text-sm font-bold text-[var(--text-secondary)]" role="status">
+          Loading inventory…
+        </p>
+      )}
+      {productsError && (
+        <div
+          className="brutalist-card flex flex-wrap items-center justify-between gap-4"
+          role="alert"
+        >
+          <p className="font-bold">Could not load inventory: {productsError}</p>
+          <button className="brutalist-btn" onClick={refreshProducts}>
+            Retry
+          </button>
+        </div>
+      )}
 
       {/* ── STATS BAR ── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -240,32 +269,37 @@ export function Inventory() {
                 onClick={() => handleSort('name')}
                 className="cursor-pointer hover:bg-[#222] select-none"
               >
-                {t('inventory.product')} <SortIcon field="name" sortField={sortField} sortAsc={sortAsc} />
+                {t('inventory.product')}{' '}
+                <SortIcon field="name" sortField={sortField} sortAsc={sortAsc} />
               </th>
               <th>{t('inventory.category')}</th>
               <th
                 onClick={() => handleSort('sell')}
                 className="cursor-pointer hover:bg-[#222] select-none"
               >
-                {t('inventory.costPrice')} / {t('inventory.sellingPrice')} <SortIcon field="sell" sortField={sortField} sortAsc={sortAsc} />
+                {t('inventory.costPrice')} / {t('inventory.sellingPrice')}{' '}
+                <SortIcon field="sell" sortField={sortField} sortAsc={sortAsc} />
               </th>
               <th
                 onClick={() => handleSort('margin')}
                 className="cursor-pointer hover:bg-[#222] select-none"
               >
-                {t('inventory.margin')} <SortIcon field="margin" sortField={sortField} sortAsc={sortAsc} />
+                {t('inventory.margin')}{' '}
+                <SortIcon field="margin" sortField={sortField} sortAsc={sortAsc} />
               </th>
               <th
                 onClick={() => handleSort('quantity')}
                 className="cursor-pointer hover:bg-[#222] select-none"
               >
-                {t('inventory.stock')} <SortIcon field="quantity" sortField={sortField} sortAsc={sortAsc} />
+                {t('inventory.stock')}{' '}
+                <SortIcon field="quantity" sortField={sortField} sortAsc={sortAsc} />
               </th>
               <th
                 onClick={() => handleSort('expiry_date')}
                 className="cursor-pointer hover:bg-[#222] select-none"
               >
-                {t('inventory.expiryDate')} <SortIcon field="expiry_date" sortField={sortField} sortAsc={sortAsc} />
+                {t('inventory.expiryDate')}{' '}
+                <SortIcon field="expiry_date" sortField={sortField} sortAsc={sortAsc} />
               </th>
               <th className="text-right">{t('inventory.action')}</th>
             </tr>
